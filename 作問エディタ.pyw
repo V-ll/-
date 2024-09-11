@@ -13,7 +13,7 @@ formatt=lambda x:x.replace('\n','\\n').replace('"','\\"')
 if True:#折り畳めるようにインデントした。
     fonts=('',12)
     window=Tk()
-    window.title('V.ll式作問エディタβ19.15')
+    window.title('V.ll式作問エディタβ19.16')
     #問題総まとめ
     問題総まとめ=Frame(window)
     問題総まとめ.pack(anchor=NW)
@@ -224,7 +224,7 @@ class Problem:
         コーナー入力="1,1",
         コーナー出力="1",
         想定解="# AのB乗はA**Bです。\n# それをprintするだけ!\nA=B=1\nprint(A**B)",
-        生成機="from random import randint\nA=randint(1,1000)\nB=randint(1,1000)",
+        生成機="from random import randint,random\nfrom math import log10\nrand1=lambda n:round(10**(random()*log10(n)))#1以上n以下の乱数で、桁数がほぼ一様になるもの\nA=rand1(1000)\nB=rand1(1000)",
         解説="更新:TOYPROでは解説欄は基本的に見れません。\n想定解にコメントとして書くことをおすすめします。"
         ):
         for i in['タイトル','得点','タグ','名前','問題文','必要変数','制約','テストケース','出力','コーナー入力','コーナー出力','想定解','生成機','解説']:exec(f'self.{i}={i}')
@@ -396,6 +396,7 @@ def 色変えるマン(*e,t=window):
     try:
         t['bg']=("#eeeeee"if type(t)not  in[Entry,ScrolledText] else"#ffffff")if テーマ.get()=='light'else("#222222"if type(t)in[Entry,ScrolledText] else"#333333")
         t['fg']="#000000"if テーマ.get()=='light'else"#eeeeee"
+        t['insertbackground']="#000000"if テーマ.get()=='light'else"#eeeeee"
     except:pass
 def 開いて反映sub(a):
     if a:
@@ -503,11 +504,6 @@ def 新規問題(*e):
 def 制約チェック文字変えer(*e):
     global 制約チェック
     制約チェック['text']='クリックで制約判定を'+'OOFNF'[1-制約実行可否.get()::2]+'に(今は'+'OOFNF'[制約実行可否.get()::2]+')'
-def 圧縮するか文字変えer(*e):
-    global 圧縮しますか
-    if 圧縮します.get():
-        圧縮しますか['text']='縮小版を保存します(非推奨)'
-    else:圧縮しますか['text']='通常版を保存します(推奨)'
 #＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 想定解から出力を求めるボタン["command"]=テストケースから出力を得る
 json化ボタン["command"]=いい感じマン
@@ -552,4 +548,8 @@ if len(argv)>1 and argv[1].endswith('.json'):
 色変えるマン()
 #window.update()
 window.resizable(width=0,height=0)
-window.mainloop()
+try:
+    window.mainloop()
+except Exception as e:
+    with open('error.txt','w')as f:
+        f.write(str(dir(e))+'\n'+str(e)+'\n'+str(traceback.format_exc())+'\ndone')
